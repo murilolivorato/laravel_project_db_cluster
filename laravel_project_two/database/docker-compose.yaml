@@ -1,0 +1,31 @@
+version: "3.9"
+networks:
+  db_one:
+services:   
+  mysql:
+    image: mysql:8.0.1
+    restart: unless-stopped
+    tty: true
+    container_name: mysql_db_one
+    env_file:
+      - ./mysql/mysql.env
+    ports:
+      - 3306:3306
+    networks:
+      - db_one
+    volumes:
+      - /opt/mysql_data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    container_name: phpmyadmin_db_one
+    depends_on:
+      - mysql
+    ports:
+      - '8890:80'
+    environment:
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=secret
+    networks:
+      - db_one
